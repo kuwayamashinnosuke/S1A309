@@ -16,7 +16,7 @@ p {
 }
 /*ここから*/
 p::before{
-  content: ◇;
+  content: "■";
   margin-right: 4px;
   color: #ef626c;
 }

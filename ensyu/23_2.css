@@ -39,26 +39,7 @@ input[type="text"],textarea{
     border-radius: 5px;
 }
 .job{
-    margin-right: .8em;
-}
-p {
-    margin: 20px 0 4px;
-    color: #ef626c;
-    font-size: 16px;
-}
-/*ここから*/
-p::before{
-    content: #ef62bc;
-    margin-right: 4px;
-    color: #ef626c;
-}
-input[type="text"],select,
-textarea{
-    background: #fff;
-    border: none;
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
+    margin-right:.8em;
 }
 select{
     background: #fff;
@@ -73,6 +54,8 @@ textarea{
 .btn{
     text-align: center;
 }
+/*ここから*/
+
 input[type="submit"]{
     background: #00a;
     border: none;
