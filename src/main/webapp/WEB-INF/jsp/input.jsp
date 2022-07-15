@@ -11,7 +11,6 @@ String[]todoList= {"Linuxテスト対策","paiza","TODOアプリ作成","履歴�
 <title>TODOアプリ入力画面</title>
 <link rel="shortcut icon" href="images/favicon.ico">
 </head>
-<body>
 <script type="text/javascript">
 <!--
 function check(){
@@ -33,11 +32,21 @@ function check(){
 		return true;
 	}
 }
+
 </script>
-<form action="/S2A116/InputServlet" method="post" name="form1" onsubmit="return check()" >>
+<style>
+.error{
+	color: red;
+}
+</style>
+<body>
+
+
+<form action="/S2A116/InputServlet" method="post" name="form1" onsubmit="return check()" >
 <h1>TODOアプリケーション</h1>
 <h2>TODOの入力</h2>
 
+<p class="error">${msg}</p>
 
 
 重要度:

@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import model.Todo;
 
@@ -30,7 +31,11 @@ public class InputServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.sendRedirect("input.jsp");
+		RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/input.jsp");
+		dispatcher.forward(request, response);
+		
+		
+		
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -55,13 +60,22 @@ public class InputServlet extends HttpServlet {
 		todo.setNumbers(Numbers);
 		todo.setContents(Contents);
 		todo.setLimitDay(limitDay);
-		
 		request.setAttribute("msg", errorMsg);
-		request.setAttribute("todo", todo);
 		
+		HttpSession session=request.getSession();
+		session.setAttribute("todo", todo);
+		
+		if(errorMsg.length() != 0) {
+			request.setAttribute("errorMsg", errorMsg);
+			RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/input.jsp");
+			dispatcher.forward(request, response);
+			return;
+		}
 		
 		RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/list.jsp");
 		dispatcher.forward(request, response);
+		
+		
 	}
 
 }
