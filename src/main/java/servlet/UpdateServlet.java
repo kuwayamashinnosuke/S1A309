@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import model.Todo;
+import model.UpdateLogic;
 
 /**
  * Servlet implementation class UpdateServlet
@@ -46,45 +49,36 @@ public class UpdateServlet extends HttpServlet {
 		String Numbers = request.getParameter("Numbers");
 		String Contents = request.getParameter("Contents");
 		String limitDay = request.getParameter("limitDay");
-		String errorMsg="";
+		String su=request.getParameter("status");
+		int number=Integer.parseInt(su);
+		
+		
+		
+		
+		
+		
+		Todo todo= new Todo();
+		todo.setContents(Contents);
+		todo.setLimitDay(limitDay);
+		todo.setNumbers(Numbers);
+		
 		
 		HttpSession session=request.getSession();
-		Todo todo=(Todo)session.getAttribute("todo");
-		try {
-			if (Numbers.length() != 0) {
-				todo.setNumbers(Numbers);
-			}
-			if (Contents.length() != 0) {
-				todo.setContents(Contents);
-			}
-			if (limitDay.length() != 0) {
-				todo.setLimitDay(limitDay);
-			}
-		}catch(NullPointerException e) {
-			errorMsg+="変更する項目がありません<br>";
-			request.setAttribute("msg", errorMsg);
-			RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/list.jsp");
-			dispatcher.forward(request, response);
-			return;
-		}
-
 		
-		if(Contents==null || Contents.length()==0) {
-			todo.getContents();
-		}
-		if(limitDay==null || limitDay.length()==0) {
-			todo.getLimitDay();
-		}
-		request.setAttribute("msg", errorMsg);
 		
-		if(errorMsg.length() != 0) {
-			request.setAttribute("errorMsg", errorMsg);
-			RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/list.jsp");
-			dispatcher.forward(request, response);
-			return;
+		//セッションスコープのtodo管理用リスト引継ぎ
+		List<Todo> todoList= (ArrayList<Todo>)session.getAttribute("todoList");
+		if(todoList==null) {
+			//複数管理用todoリスト
+			todoList=new ArrayList<Todo>();
+			
+		}else {
+			//リストの1件分のデータを変更
+			int status=number-1;
+			UpdateLogic UpdateLogic=new UpdateLogic();
+			UpdateLogic.execute(todoList,status, todo);
 		}
-		
-		session.setAttribute("todo", todo);
+		session.setAttribute("todoList", todoList);
 		
 		RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/list.jsp");
 		dispatcher.forward(request, response);

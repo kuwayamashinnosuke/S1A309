@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import model.InputLogic;
 import model.Todo;
+import model.User;
 
 /**
  * Servlet implementation class InputServlet
@@ -31,16 +35,23 @@ public class InputServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/input.jsp");
-		dispatcher.forward(request, response);
-		
-		
-		
+		HttpSession session=request.getSession();
+		User loginUser=(User)session.getAttribute("loginUser");
+		if(loginUser !=null) {
+			RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/input.jsp");
+			dispatcher.forward(request, response);
+		}else {
+			response.sendRedirect("index.jsp");
+			
+			return;
+		}
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		
 		
 		String Numbers=request.getParameter ("Numbers");
 		String Contents=request.getParameter("Contents");
@@ -60,20 +71,41 @@ public class InputServlet extends HttpServlet {
 		todo.setNumbers(Numbers);
 		todo.setContents(Contents);
 		todo.setLimitDay(limitDay);
-		request.setAttribute("msg", errorMsg);
-		
+		//セッションオブジェクトの取得
 		HttpSession session=request.getSession();
-		session.setAttribute("todo", todo);
+		
+		//セッションスコープのtodo管理用リスト引継ぎ
+		List<Todo> todoList= (ArrayList<Todo>)session.getAttribute("todoList");
 		
 		if(errorMsg.length() != 0) {
-			request.setAttribute("errorMsg", errorMsg);
+			request.setAttribute("msg", errorMsg);
 			RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/input.jsp");
 			dispatcher.forward(request, response);
 			return;
 		}
 		
+		if(todoList==null) {
+			//複数管理用todoリスト
+			todoList=new ArrayList<Todo>();
+			
+		}else {
+			//リストに1件分のデータを追加
+			InputLogic inputLogic=new InputLogic();
+			inputLogic.execute(todoList, todo);
+		}
+		
+		
+		
+		//セッションスコープにtodoを設定
+		
+		session.setAttribute("todoList", todoList);
+		
 		RequestDispatcher dispatcher=request.getRequestDispatcher("/WEB-INF/jsp/list.jsp");
 		dispatcher.forward(request, response);
+		
+		
+		
+		
 		
 		
 	}
